@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">JetpackCompose</string>
+    <string name="helli">hello %1$</string>
+</resources>
