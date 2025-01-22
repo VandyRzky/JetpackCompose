@@ -9,6 +9,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -31,9 +32,15 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Shapes
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarColors
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -52,14 +59,6 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             scaffoldSample()
-//            Column (modifier = Modifier
-//                .fillMaxSize()
-//                .padding(top = 20.dp, start = 10.dp, bottom = 20.dp, end = 10.dp)) {
-//                userProfile()
-//                userChat()
-//                iniButton()
-//
-//            }
         }
     }
 }
@@ -121,12 +120,14 @@ fun userProfile(modifier: Modifier = Modifier) {
 @Composable
 fun iniButton(modifier: Modifier = Modifier) {
     val context = LocalContext.current
-    Button(onClick = {
+    Button(
+        onClick = {
         val intent = Intent(context, SecondActivity::class.java)
         context.startActivity(intent)
     },
         contentPadding = PaddingValues(12.dp),
-        colors = ButtonColors(Purple40, Color.Gray, Color.Blue, Color.Red)) {
+        colors = ButtonColors(Purple40, Color.Gray, Color.Blue, Color.Red)
+    ) {
         Row (verticalAlignment = Alignment.CenterVertically){
             Icon(Icons.Filled.Build, contentDescription = null, modifier = Modifier
                 .size(15.dp))
@@ -134,6 +135,45 @@ fun iniButton(modifier: Modifier = Modifier) {
             Text(text = "ini button text")
         }
     }
+}
+
+@Composable
+fun countFunction(modifier: Modifier = Modifier) { //menggunakan state hosting
+    var count by remember {
+        mutableStateOf(0)
+    }
+    countButton(count = count, pengubah = {count++})
+}
+
+@Composable
+fun countButton(count: Int, pengubah: () -> Unit) {
+
+    Row (
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceEvenly,
+        modifier = Modifier
+            .fillMaxWidth()
+        ){
+        Text(text = "count: $count")
+        Button(onClick = pengubah) {
+            Text(text = "Pencet")
+        }
+    }
+}
+
+@Composable
+fun searchBar(modifier: Modifier = Modifier) {
+    var input by rememberSaveable{ mutableStateOf("")} //state
+    TextField(
+        value = input,
+        onValueChange = {updateInput-> //update state
+            input = updateInput
+        },
+        modifier= Modifier
+            .fillMaxWidth(),
+        placeholder = { Text(text = "ini placeholder")}
+
+    )
 }
 
 @Composable
@@ -161,6 +201,8 @@ fun scaffoldSample(modifier: Modifier = Modifier) {
             userProfile()
             userChat()
             iniButton()
+            countFunction()
+            searchBar()
         }
     }
 }
