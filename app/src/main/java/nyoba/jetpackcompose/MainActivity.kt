@@ -2,8 +2,12 @@
 
 package nyoba.jetpackcompose
 
+import android.content.Context
 import android.content.Intent
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
@@ -113,11 +117,37 @@ fun userProfile(modifier: Modifier = Modifier) {
     }
 }
 
+fun checkInternetConnection(context: Context) {
+    val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    val activeNetwork = connectivityManager.activeNetwork
+    val networkCapabilities = connectivityManager.getNetworkCapabilities(activeNetwork)
+
+    if (networkCapabilities != null) {
+        when {
+            networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> {
+                Log.e("InternetStatus", "Internet tersedia melalui Wi-Fi")
+            }
+            networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> {
+                Log.e("InternetStatus", "Internet tersedia melalui data seluler")
+            }
+            networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> {
+                Log.e("InternetStatus", "Internet tersedia melalui Ethernet")
+            }
+            else -> {
+                Log.e("InternetStatus", "Internet tidak tersedia")
+            }
+        }
+    } else {
+        Log.e("InternetStatus", "Tidak ada koneksi internet")
+    }
+}
+
 @Composable
 fun iniButton(modifier: Modifier = Modifier) {
     val context = LocalContext.current
     Button(
         onClick = {
+            checkInternetConnection(context)
         val intent = Intent(context, SecondActivity::class.java)
         context.startActivity(intent)
     },
