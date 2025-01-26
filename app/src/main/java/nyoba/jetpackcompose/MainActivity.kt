@@ -29,8 +29,10 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -48,17 +50,53 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import nyoba.jetpackcompose.ui.theme.Purple40
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            scaffoldSample()
+
+            val navController = rememberNavController()
+
+            NavHost(navController = navController, startDestination = "home"){
+                composable("home") { scaffoldSample(navController) }
+                composable("thirdScreen") { thirdScreen(navControler = navController) }
+            }
+//            scaffoldSample()
+        }
+    }
+}
+
+
+@Composable
+fun buttonThirdScreen(navController: NavController,modifier: Modifier = Modifier) {
+    Button(onClick = {
+        navController.navigate("thirdScreen")
+    },
+        modifier = modifier
+            .size(100.dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = Color.White,
+            contentColor = Color.Gray
+        ),
+        shape = RectangleShape
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Icon(Icons.Filled.Info, contentDescription = null, modifier.size(50.dp))
+            Text(text = "Third")
         }
     }
 }
@@ -91,6 +129,7 @@ fun userChat(modifier: Modifier = Modifier){
             .size(18.dp))
     }
 }
+
 
 
 @Composable
@@ -232,7 +271,7 @@ fun tulisNama(state: State = stateRemember(field = "", condition = false)) {
 }
 
 @Composable
-fun scaffoldSample(modifier: Modifier = Modifier) {
+fun scaffoldSample(navController: NavController,modifier: Modifier = Modifier) {
     Scaffold (
         topBar = {
             TopAppBar(
@@ -261,6 +300,7 @@ fun scaffoldSample(modifier: Modifier = Modifier) {
             countFunction()
             searchBar()
             tulisNama()
+            buttonThirdScreen(navController = navController)
         }
     }
 }
